@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router'
 import { toast } from 'sonner'
@@ -89,12 +89,34 @@ const SignUpPage = () => {
     },
   })
 
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const accessToken = localStorage.getItem('accessToken')
+        const refreshToken = localStorage.getItem('refreshToken')
+        console.log('Access Token:', accessToken)
+        if (!accessToken && !refreshToken) return
+        const response = await api.get('/users/me', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        setUser(response.data)
+      } catch (error) {
+        localStorage.removeItem('accessToken')
+        localStorage.removeItem('refreshToken')
+        console.error(error)
+      }
+    }
+    init()
+  }, [])
+
   const handleSubmit = (data) => {
     signupMutation.mutate(data, {
       onSuccess: (createdUser) => {
         const accessToken = createdUser.tokens.accessToken
         const refreshToken = createdUser.tokens.refreshToken
-        localStorage.setItem('acessToken', accessToken)
+        localStorage.setItem('accessToken', accessToken)
         localStorage.setItem('refreshToken', refreshToken)
         setUser(createdUser)
         toast.success('Conta criada com sucesso!')
