@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router'
+import { Link, Navigate } from 'react-router'
 import z from 'zod'
 
 import PasswordInput from '@/components/password-input'
@@ -41,7 +41,7 @@ const loginSchema = z.object({
 })
 
 const LoginPage = () => {
-  const { user, login } = useAuthContext()
+  const { user, login, isInitializing } = useAuthContext()
 
   const form = useForm({
     resolver: zodResolver(loginSchema),
@@ -52,8 +52,9 @@ const LoginPage = () => {
   })
 
   const handleSubmit = (data) => login(data)
+  if (isInitializing) return null
   if (user) {
-    return <h1>Olá {user.first_name}!</h1>
+    return <Navigate to="/" />
   }
 
   return (
