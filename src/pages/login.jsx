@@ -54,12 +54,12 @@ const LoginPage = () => {
     },
   })
 
+  // Pegar os tokens para que o usuario não precise fazer login novamente
   useEffect(() => {
     const init = async () => {
       try {
         const accessToken = localStorage.getItem('accessToken')
         const refreshToken = localStorage.getItem('refreshToken')
-        console.log('Access Token:', accessToken)
         if (!accessToken && !refreshToken) return
         const response = await api.get('/users/me', {
           headers: {
@@ -76,6 +76,7 @@ const LoginPage = () => {
     init()
   }, [])
 
+  //Acessa a API e envia o email e senha para fazer o login
   const loginMutation = useMutation({
     mutationKey: ['login'],
     mutationFn: async (variables) => {
@@ -107,6 +108,7 @@ const LoginPage = () => {
   if (user) {
     return <h1>Olá {user.first_name}!</h1>
   }
+
   return (
     <div className="h-screen w-screen flex flex-col gap-3 items-center justify-center">
       <Form {...form}>
