@@ -12,6 +12,7 @@ export const AuthContext = createContext({
 
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState()
+
   const signupMutation = useMutation({
     mutationKey: ['signup'],
     mutationFn: async (variables) => {
@@ -25,12 +26,23 @@ export const AuthContextProvider = ({ children }) => {
     },
   })
 
+  //Acessa a API e envia o email e senha para fazer o login
+  const loginMutation = useMutation({
+    mutationKey: ['login'],
+    mutationFn: async (variables) => {
+      const response = await api.post('/users/login', {
+        email: variables.email,
+        password: variables.password,
+      })
+      return response.data
+    },
+  })
+
   useEffect(() => {
     const init = async () => {
       try {
         const accessToken = localStorage.getItem('accessToken')
         const refreshToken = localStorage.getItem('refreshToken')
-        console.log('Access Token:', accessToken)
         if (!accessToken && !refreshToken) return
         const response = await api.get('/users/me', {
           headers: {
@@ -64,12 +76,30 @@ export const AuthContextProvider = ({ children }) => {
       },
     })
   }
+
+  const login = (data) => {
+    loginMutation.mutate(data, {
+      onSuccess: (loggerUser) => {
+        const accessToken = loggerUser.tokens.accessToken
+        const refreshToken = loggerUser.tokens.refreshToken
+        localStorage.setItem('accessToken', accessToken)
+        localStorage.setItem('refreshToken', refreshToken)
+        setUser(loggerUser)
+        toast.success('Login realizado com sucesso!')
+      },
+      onError: () => {
+        toast.error(
+          'Erro ao logar na conta, por favor tente novamente mais tarde!'
+        )
+      },
+    })
+  }
   return (
     <AuthContext.Provider
       value={{
-        user: user,
-        login: () => {},
-        signup: signup,
+        user,
+        login,
+        signup,
       }}
     >
       {children}
