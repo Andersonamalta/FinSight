@@ -1,6 +1,7 @@
 import { PlusIcon } from 'lucide-react'
 import { Navigate } from 'react-router'
 
+import Balance from '@/components/balance'
 import DateSelection from '@/components/date-selection'
 import Header from '@/components/header'
 import { Button } from '@/components/ui/button'
@@ -16,7 +17,7 @@ const HomePage = () => {
   return (
     <>
       <Header />
-      <div className="p-8">
+      <div className="p-8 space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="font-bold text-2xl">Dashboard</h2>
           <div className="flex gap-2 items-center">
@@ -26,6 +27,9 @@ const HomePage = () => {
               Nova transação
             </Button>
           </div>
+        </div>
+        <div className="grid grid-cols-[2fr,1fr]">
+          <Balance />
         </div>
       </div>
     </>
