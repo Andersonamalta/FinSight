@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 
 import { useCreateTransaction } from '@/api/hooks/transaction'
 
-import { useCreateTransactionFormSchema } from './schemas/transaction'
+import { useCreateTransactionFormSchema } from '../schemas/transaction'
 
 export const useCreateTransactionForm = ({ onSuccess, onError }) => {
   const { mutate: createTransaction, isPending } = useCreateTransaction()
